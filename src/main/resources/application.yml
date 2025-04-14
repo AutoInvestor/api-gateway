@@ -4,18 +4,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: "https://dev-90706258.okta.com/oauth2/default"
-      client:
-        registration:
-          client-credentials:
-            client-id: "0oao8gn3amhmYtDQo5d7"
-            client-secret: "dAVzCIrXkrqI7miFW3MTb48O0QoLldWLspfZdopXB_m135CItfYKHppgkYAZmRRR"
-            scope: "test"
-            authorization-grant-type: "client_credentials"
-            provider: okta
-        provider:
-          okta:
-            issuer-uri: "https://dev-90706258.okta.com/oauth2/default"
-            token-uri: "https://dev-90706258.okta.com/oauth2/default/v1/token"
+
 
   cloud:
     gateway:
@@ -26,4 +15,7 @@ spring:
             - Path=/products
           filters:
             - Authorize
-            - ExtractClaim=aud,MY-HEADER-CLAIM-ADDITION
+            #- ExtractClaim=sub,MY-NAME
+logging:
+  level:
+    org.springframework.security: DEBUG
