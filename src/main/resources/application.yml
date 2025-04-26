@@ -14,7 +14,7 @@ spring:
           predicates:
               - Path=/
           filters:
-            -SetStatus=200
+            - SetStatus=200
 
         - id: add-header
           uri: "http://localhost:8085"
