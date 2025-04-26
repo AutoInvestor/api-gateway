@@ -5,7 +5,6 @@ spring:
         jwt:
           issuer-uri: "https://dev-90706258.okta.com/oauth2/default"
 
-
   cloud:
     gateway:
       routes:
