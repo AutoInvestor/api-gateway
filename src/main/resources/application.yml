@@ -9,6 +9,13 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: root-health-endpoint
+          uri: http://localhost:8080
+          predicates:
+              - Path=/
+          filters:
+            -SetStatus=200
+
         - id: add-header
           uri: "http://localhost:8085"
           predicates:
