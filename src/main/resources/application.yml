@@ -1,0 +1,21 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "https://dev-90706258.okta.com/oauth2/default"
+
+
+  cloud:
+    gateway:
+      routes:
+        - id: add-header
+          uri: "http://localhost:8085"
+          predicates:
+            - Path=/products
+          filters:
+            - Authorize
+            #- ExtractClaim=sub,MY-NAME
+logging:
+  level:
+    org.springframework.security: DEBUG
