@@ -16,15 +16,19 @@ public class InlineController {
 
         Map<String, Object> value = new HashMap<>();
         value.put("op", "add");
-        value.put("path", "/claims/appId");
+        value.put("path", "/claims/userId");
         value.put("value", "0123456789");
 
-        Map<String, Object> command = new HashMap<>();
-        command.put("type", "com.okta.access.patch");
-        command.put("value", List.of(value));
+        Map<String, Object> accessTokenCommand = new HashMap<>();
+        accessTokenCommand.put("type", "com.okta.access.patch");
+        accessTokenCommand.put("value", List.of(value));
+
+        Map<String, Object> idTokenCommand = new HashMap<>();
+        idTokenCommand.put("type", "com.okta.identity.patch");
+        idTokenCommand.put("value", List.of(value));
 
         InLineResponseObject inLineResponseObject = new InLineResponseObject();
-        inLineResponseObject.setCommands(List.of(command));
+        inLineResponseObject.setCommands(List.of(accessTokenCommand, idTokenCommand));
 
         return inLineResponseObject;
     }
