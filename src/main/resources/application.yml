@@ -27,7 +27,7 @@ spring:
           predicates:
             - Path=/api/users
           filters:
-            - Authorize
+            #- Authorize
 logging:
   level:
     org.springframework.security: DEBUG
