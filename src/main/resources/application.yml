@@ -26,6 +26,8 @@ spring:
           uri: "http://users-service/testUser"
           predicates:
             - Path=/api/users
+          filters:
+            - Authorize
 logging:
   level:
     org.springframework.security: DEBUG
