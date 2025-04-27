@@ -1,22 +1,20 @@
 package io.autoinvestor.inlineHook;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class InlineController {
 
     @PostMapping("/api/inlineHook")
-    public InLineResponseObject handle (@RequestBody JsonNode body) {
+    public InLineResponseObject handle(@RequestBody JsonNode body) {
 
-        Map<String,Object> value = new HashMap<>();
+        Map<String, Object> value = new HashMap<>();
         value.put("op", "add");
         value.put("path", "/claims/appId");
         value.put("value", "0123456789");
@@ -30,5 +28,4 @@ public class InlineController {
 
         return inLineResponseObject;
     }
-
 }
