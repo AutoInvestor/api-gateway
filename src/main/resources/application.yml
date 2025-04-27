@@ -22,6 +22,10 @@ spring:
           filters:
             - Authorize
             #- ExtractClaim=sub,MY-NAME
+        - id: userId
+          uri: "http://users-service.autoinvestor.svc.cluster.local/testUser"
+          predicates:
+            - Path=/api/users
 logging:
   level:
     org.springframework.security: DEBUG
