@@ -23,7 +23,7 @@ spring:
             - Authorize
             #- ExtractClaim=sub,MY-NAME
         - id: userId
-          uri: "http://users-service:80/testUser"
+          uri: "http://users-service/api/testUsers"
           predicates:
             - Path=/api/users
           filters:
