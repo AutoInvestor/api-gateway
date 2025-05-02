@@ -23,9 +23,9 @@ spring:
             - Authorize
             #- ExtractClaim=sub,MY-NAME
         - id: userId
-          uri: "http://users-service/api/testUsers"
+          uri: "http://users-service"
           predicates:
-            - Path=/api/users
+            - Path=/api/testUsers
           filters:
             - SetStatus=200
 logging:
