@@ -28,6 +28,7 @@ public class InlineController {
         value.put("op", "add");
         value.put("path", "/claims/userId");
 
+
         value.put("value", userId);
 
         Map<String, Object> accessTokenCommand = new HashMap<>();
