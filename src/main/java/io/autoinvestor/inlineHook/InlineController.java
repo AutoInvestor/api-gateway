@@ -28,7 +28,7 @@ public class InlineController {
         value.put("op", "add");
         value.put("path", "/claims/userId");
 
-        value.put("value", email);
+        value.put("value", userId);
 
         Map<String, Object> accessTokenCommand = new HashMap<>();
         accessTokenCommand.put("type", "com.okta.access.patch");
