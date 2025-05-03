@@ -27,7 +27,8 @@ public class InlineController {
         Map<String, Object> value = new HashMap<>();
         value.put("op", "add");
         value.put("path", "/claims/userId");
-        value.put("value", userId);
+
+        value.put("value", email);
 
         Map<String, Object> accessTokenCommand = new HashMap<>();
         accessTokenCommand.put("type", "com.okta.access.patch");
