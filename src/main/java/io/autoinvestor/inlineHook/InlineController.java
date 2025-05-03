@@ -21,7 +21,7 @@ public class InlineController {
     @PostMapping("/api/inlineHook")
     public InLineResponseObject handle(@RequestBody JsonNode body) {
 
-        String email = body.path("data").path("sub").asText();
+        String email = body.path("data").path("access").path("claims").path("sub").asText();
         String userId = fetchUserId(email);
 
         Map<String, Object> value = new HashMap<>();
