@@ -27,7 +27,7 @@ spring:
           predicates:
             - Path=/api/testUsers
           filters:
-            #- Authorize
+            - Authorize
             - ExtractClaim=userId,USER-ID
 logging:
   level:
