@@ -21,7 +21,7 @@ spring:
             - Path=/products
           filters:
             - Authorize
-            #- ExtractClaim=sub,MY-NAME
+            - ExtractClaim=userId,USER-ID
         - id: userId
           uri: "http://users-service"
           predicates:
