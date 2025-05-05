@@ -27,7 +27,8 @@ spring:
           predicates:
             - Path=/api/testUsers
           filters:
-            - SetStatus=200
+            - Authorize
+            - ExtractClaim=userId,USER-ID
 logging:
   level:
     org.springframework.security: DEBUG
