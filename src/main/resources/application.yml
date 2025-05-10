@@ -8,27 +8,23 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: root-health-endpoint
-          uri: http://localhost:8080
+        - id: plain-text-response
+          uri: "no://localhost"
           predicates:
-              - Path=/
+            - Path=/
           filters:
-            - SetStatus=200
+            - SetStatus=204
 
-        - id: add-header
-          uri: "http://localhost:8085"
+        - id: allow-inline-hook-access
+          uri: "forward:/internal-endpoint"
           predicates:
-            - Path=/products
+            - Path=/api/inlineHook
+
+        - id: secure-portfolio-requests
+          uri: "http://portfolio-service"
+          predicates:
+            - Path=/api/portfolio/**
           filters:
             - Authorize
-            - ExtractClaim=userId,USER-ID
-        - id: userId
-          uri: "http://users-service"
-          predicates:
-            - Path=/api/testUsers
-          filters:
-            - Authorize
-            - ExtractClaim=userId,USER-ID
-logging:
-  level:
-    org.springframework.security: DEBUG
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/(?<segment>.*), /${segment}

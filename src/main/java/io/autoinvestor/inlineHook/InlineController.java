@@ -1,9 +1,6 @@
 package io.autoinvestor.inlineHook;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,35 +10,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @RestController
+@RequiredArgsConstructor
 public class InlineController {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     @PostMapping("/api/inlineHook")
-    public InLineResponseObject handle(@RequestBody JsonNode body) {
-
-        String email = body.path("data").path("access").path("claims").path("sub").asText();
+    public InLineResponseObject handle(@RequestBody InLineRequestObject body) {
+        String email = body.data().access().claims().sub();
         String userId = fetchUserId(email);
 
-        Map<String, Object> value = new HashMap<>();
-        value.put("op", "add");
-        value.put("path", "/claims/userId");
+        var accessPatch = new InLineResponseObject.Command("com.okta.access.patch", List.of(addUserIdClaim(userId)));
+        var identityPatch = new InLineResponseObject.Command("com.okta.identity.patch", List.of(addUserIdClaim(userId)));
 
-        value.put("value", userId);
+        return new InLineResponseObject(List.of(accessPatch, identityPatch));
+    }
 
-        Map<String, Object> accessTokenCommand = new HashMap<>();
-        accessTokenCommand.put("type", "com.okta.access.patch");
-        accessTokenCommand.put("value", List.of(value));
-
-        Map<String, Object> idTokenCommand = new HashMap<>();
-        idTokenCommand.put("type", "com.okta.identity.patch");
-        idTokenCommand.put("value", List.of(value));
-
-        InLineResponseObject inLineResponseObject = new InLineResponseObject();
-        inLineResponseObject.setCommands(List.of(accessTokenCommand, idTokenCommand));
-
-        return inLineResponseObject;
+    private static InLineResponseObject.Command.Value addUserIdClaim(String userId) {
+        return new InLineResponseObject.Command.Value(
+                "add",
+                "/claims/userId",
+                userId
+        );
     }
 
     private String fetchUserId(String email) {
