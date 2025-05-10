@@ -1,17 +1,19 @@
 package io.autoinvestor.inlineHook;
 
 import java.util.List;
-import java.util.Map;
 
-public class InLineResponseObject {
-
-    private List<Map<String, Object>> commands;
-
-    public List<Map<String, Object>> getCommands() {
-        return commands;
-    }
-
-    public void setCommands(List<Map<String, Object>> commands) {
-        this.commands = commands;
+public record InLineResponseObject(
+        List<Command> commands
+) {
+    public record Command(
+            String type,
+            List<Value> value
+    ) {
+        public record Value(
+                String op,
+                String path,
+                String value
+        ) {
+        }
     }
 }

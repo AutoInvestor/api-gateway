@@ -3,32 +3,33 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "https://dev-90706258.okta.com/oauth2/default"
+          issuer-uri: "${OKTA_RESOURCE_SERVER_URI}"
 
   cloud:
     gateway:
       routes:
-        - id: root-health-endpoint
-          uri: http://localhost:8080
+        - id: plain-text-response
+          uri: "no://localhost"
           predicates:
-              - Path=/
+            - Path=/
           filters:
-            - SetStatus=200
+            - SetStatus=204
 
-        - id: add-header
-          uri: "http://localhost:8085"
+        - id: allow-inline-hook-access
+          uri: "forward:/internal-endpoint"
           predicates:
-            - Path=/products
+            - Path=/api/inlineHook
+
+        - id: secure-portfolio-requests
+          uri: "${USERS_BASE_URL}"
+          predicates:
+            - Path=/api/users/**
           filters:
             - Authorize
-            - ExtractClaim=userId,USER-ID
-        - id: userId
-          uri: "http://users-service"
-          predicates:
-            - Path=/api/testUsers
-          filters:
-            - Authorize
-            - ExtractClaim=userId,USER-ID
-logging:
-  level:
-    org.springframework.security: DEBUG
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/(?<segment>.*), /${segment}
+
+autoinvestor:
+  client:
+    users:
+      url: "${USERS_BASE_URL}"
