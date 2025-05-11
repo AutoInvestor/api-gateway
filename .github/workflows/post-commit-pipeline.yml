@@ -79,10 +79,6 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
         run: ./gradlew bootBuildImage
 
-      - name: Configure GCP Docker Artifact registry
-        run: |
-          gcloud auth configure-docker ${{ vars.DOCKER_ARTIFACT_REGISTRY }}
-
       - name: Build & push docker image
         if: steps.version_increment.outputs.bump != 'none'
         env:
