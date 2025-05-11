@@ -20,7 +20,7 @@ public class UsersClient {
     public Mono<UserResponse> getUser(String email) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/user")
+                        .path("/api/user")
                         .queryParam("email", email).build())
                 .exchangeToMono(clientResponse -> {
                     if (clientResponse.statusCode().is2xxSuccessful()) {
