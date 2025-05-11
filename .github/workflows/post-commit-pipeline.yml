@@ -82,8 +82,8 @@ jobs:
       - name: Build & push docker image
         if: steps.version_increment.outputs.bump != 'none'
         env:
-          DOCKER_REGISTRY: ${{ vars.GCP_REGION }}-docker.pkg.dev
-          DOCKER_NAMESPACE: "${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/docker-images"
+          DOCKER_REGISTRY: ${{ vars.DOCKER_ARTIFACT_REGISTRY }}
+          DOCKER_NAMESPACE: ${{ vars.DOCKER_ARTIFACT_NAMESPACE }}
           DOCKER_IMAGE_VERSION: "${{ steps.calculate_version.outputs.new_version }}"
           DOCKER_USERNAME: _json_key
           DOCKER_PASSWORD: ${{ secrets.GCP_SA_KEY }}
