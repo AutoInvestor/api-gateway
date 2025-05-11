@@ -13,7 +13,14 @@ spring:
           predicates:
             - Path=/
           filters:
-            - SetStatus=204
+            - RewritePath=/, /actuator/health
+
+        - id: plain-text-response
+          uri: "no://localhost"
+          predicates:
+            - Path=/api/actuator/**
+          filters:
+            - RewritePath=/(?<segment>.*), /actuator/${segment}
 
         - id: allow-inline-hook-access
           uri: "forward:/internal-endpoint"
