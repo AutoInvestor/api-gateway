@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.3'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'com.diffplug.spotless' version '6.18.0'
+	id 'io.freefair.lombok' version '8.13.1'
 }
 
 group = 'io.autoinvestor'
@@ -31,18 +31,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
-
-
 	implementation 'org.springframework.security:spring-security-oauth2-jose'
-
 	implementation 'org.springframework.security:spring-security-oauth2-resource-server'
-
 	implementation 'org.springframework.security:spring-security-oauth2-client'
 
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	implementation 'com.jayway.jsonpath:json-path:2.8.0'
-
-
+	implementation 'com.jayway.jsonpath:json-path:2.9.0'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -50,13 +45,6 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-spotless {
-	java {
-		googleJavaFormat('1.25.0')
-		eclipse().configFile 'config/eclipse-java-formatter.xml'
-	}
 }
 
 bootBuildImage {
