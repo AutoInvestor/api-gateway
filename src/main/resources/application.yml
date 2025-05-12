@@ -15,8 +15,15 @@ spring:
           filters:
             - SetStatus=204
 
+        - id: plain-text-response
+          uri: "no://localhost"
+          predicates:
+            - Path=/api
+          filters:
+            - SetStatus=204
+
         - id: allow-inline-hook-access
-          uri: "forward:/internal-endpoint"
+          uri: "forward:/inlineHook"
           predicates:
             - Path=/api/inlineHook
 
