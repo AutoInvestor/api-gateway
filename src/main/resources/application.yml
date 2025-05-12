@@ -25,8 +25,8 @@ spring:
           predicates:
             - Path=/api/user/**
           filters:
-            - Authorize
-            - ClaimToHeader=userId,X-User-Id
+            #- Authorize
+            #- ClaimToHeader=userId,X-User-Id
             - RewritePath=/api/user(?<segment>/.*)?, /user${segment}
 
 autoinvestor:
