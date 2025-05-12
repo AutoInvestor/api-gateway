@@ -23,14 +23,14 @@ spring:
           predicates:
             - Path=/
           filters:
-            - SetStatus=204
+            - SetStatus=200
 
         - id: plain-text-response
           uri: "no://localhost"
           predicates:
             - Path=/api
           filters:
-            - SetStatus=204
+            - SetStatus=200
 
         - id: okta-login-redirect
           uri: "forward:/auth/login"
