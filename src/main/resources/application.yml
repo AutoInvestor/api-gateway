@@ -1,3 +1,13 @@
+autoinvestor:
+  domain: ${AUTOINVESTOR_URI}
+  okta:
+    clientId: ${OKTA_CLIENT_ID}
+    clientSecret: ${OKTA_CLIENT_SECRET}
+    redirectUri: "${autoinvestor.domain}/api/auth/callback"
+  client:
+    users:
+      url: "${USERS_BASE_URL}"
+
 spring:
   security:
     oauth2:
@@ -22,6 +32,16 @@ spring:
           filters:
             - SetStatus=204
 
+        - id: okta-login-redirect
+          uri: "forward:/auth/login"
+          predicates:
+            - Path=/api/auth/login
+
+        - id: okta-login-redirect
+          uri: "forward:/auth/callback"
+          predicates:
+            - Path=/api/auth/callback
+
         - id: allow-inline-hook-access
           uri: "forward:/inlineHook"
           predicates:
@@ -35,8 +55,3 @@ spring:
             - Authorize
             - ClaimToHeader=userId,X-User-Id
             - RewritePath=/api/user(?<segment>/.*)?, /user${segment}
-
-autoinvestor:
-  client:
-    users:
-      url: "${USERS_BASE_URL}"
