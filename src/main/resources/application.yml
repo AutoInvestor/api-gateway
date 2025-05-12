@@ -23,11 +23,11 @@ spring:
         - id: secure-portfolio-requests
           uri: "${USERS_BASE_URL}"
           predicates:
-            - Path=/api/users/**
+            - Path=/api/user/**
           filters:
             - Authorize
             - ClaimToHeader=userId,X-User-Id
-            - RewritePath=/(?<segment>.*), /${segment}
+            - RewritePath=/api/user(?<segment>/.*)?, /user${segment}
 
 autoinvestor:
   client:
