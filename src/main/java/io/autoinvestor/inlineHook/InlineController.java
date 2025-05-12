@@ -16,6 +16,10 @@ public class InlineController {
 
     private final UsersClient usersClient;
 
+    public InlineController(UsersClient usersClient) {
+        this.usersClient = usersClient;
+    }
+
     @PostMapping("/api/inlineHook")
     public Mono<InLineResponseObject> handle(@RequestBody InLineRequestObject body) {
         String email = body.data().access().claims().sub();
