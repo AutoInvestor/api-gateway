@@ -1,7 +1,9 @@
 package io.autoinvestor.inlineHook;
 
+import io.autoinvestor.client.users.UserResponse;
 import io.autoinvestor.client.users.UsersClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,19 +12,30 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class InlineController {
 
     private final UsersClient usersClient;
 
-    @PostMapping("/api/inlineHook")
+    @PostMapping("/inlineHook")
     public Mono<InLineResponseObject> handle(@RequestBody InLineRequestObject body) {
-        String email = body.data().access().claims().sub();
+        return Mono.fromSupplier(() -> body.data().access().claims().sub())
+                .flatMap(this::getOrCreateUser)
+                .map(InlineController::createAddClaimInlineResponseObject);
+    }
 
+    private Mono<UUID> getOrCreateUser(String email) {
         return usersClient.getUser(email)
-                .switchIfEmpty(usersClient.createUser(email))
-                .map(userResponse -> createAddClaimInlineResponseObject(userResponse.userId()));
+                .flatMap(user -> {
+                    log.info("Inline webhook called for existing user with ID: {}", user.userId());
+                    return Mono.fromSupplier(user::userId);
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    log.info("Inline webhook called for non-existing user with email: {}", email);
+                    return usersClient.createUser(email).map(UserResponse::userId);
+                }));
     }
 
     private static InLineResponseObject createAddClaimInlineResponseObject(UUID userId) {
