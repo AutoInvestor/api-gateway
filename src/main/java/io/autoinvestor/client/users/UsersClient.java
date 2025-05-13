@@ -1,6 +1,7 @@
 package io.autoinvestor.client.users;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -22,24 +23,26 @@ public class UsersClient {
                 .uri(uriBuilder -> uriBuilder
                         .path("/user")
                         .queryParam("email", email).build())
-                .exchangeToMono(clientResponse -> {
-                    if (clientResponse.statusCode().is2xxSuccessful()) {
+                .exchangeToMono(clientResponse -> Mono.defer(() -> {
+                    if (clientResponse.statusCode().value() == HttpStatus.OK.value()) {
                         return clientResponse.bodyToMono(UserResponse.class);
+                    } else if (clientResponse.statusCode().value() == HttpStatus.NOT_FOUND.value()) {
+                        return Mono.empty();
                     }
-                    return Mono.empty();
-                });
+                    return clientResponse.createError();
+                }));
     }
 
-    public Mono<UserResponse> createUser(String email) {
+    public Mono<Void> createUser(String email) {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/user").build())
                 .body(new UserRequest(email), UserRequest.class)
-                .exchangeToMono(clientResponse -> {
-                    if (clientResponse.statusCode().is2xxSuccessful()) {
-                        return clientResponse.bodyToMono(UserResponse.class);
+                .exchangeToMono(clientResponse -> Mono.defer(() -> {
+                    if (clientResponse.statusCode().value() == HttpStatus.CREATED.value()) {
+                        return Mono.empty();
                     }
-                    return Mono.empty();
-                });
+                    return clientResponse.createError();
+                }));
     }
 }

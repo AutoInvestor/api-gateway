@@ -35,7 +35,9 @@ public class InlineController {
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     log.info("Inline webhook called for non-existing user with email: {}", email);
-                    return usersClient.createUser(email).map(UserResponse::userId);
+                    return usersClient.createUser(email)
+                            .then(Mono.defer(() -> usersClient.getUser(email)))
+                            .map(UserResponse::userId);
                 }));
     }
 
