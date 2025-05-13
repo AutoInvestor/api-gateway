@@ -1,8 +1,8 @@
-package io.autoinvestor.inlineHook;
+package io.autoinvestor.controller.inlinehook;
 
 import java.util.List;
 
-public record InLineResponseObject(
+public record InlineHookResponse(
         List<Command> commands
 ) {
     public record Command(

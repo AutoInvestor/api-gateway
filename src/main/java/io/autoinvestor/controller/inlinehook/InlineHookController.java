@@ -1,4 +1,4 @@
-package io.autoinvestor.inlineHook;
+package io.autoinvestor.controller.inlinehook;
 
 import io.autoinvestor.client.users.UserResponse;
 import io.autoinvestor.client.users.UsersClient;
@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -16,15 +15,15 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class InlineController {
+public class InlineHookController {
 
     private final UsersClient usersClient;
 
     @PostMapping("/inlineHook")
-    public Mono<InLineResponseObject> handle(@RequestBody InLineRequestObject body) {
+    public Mono<InlineHookResponse> handle(@RequestBody InlineHookRequest body) {
         return Mono.fromSupplier(() -> body.data().access().claims().sub())
                 .flatMap(this::getOrCreateUser)
-                .map(InlineController::createAddClaimInlineResponseObject);
+                .map(InlineHookController::createAddClaimInlineResponseObject);
     }
 
     private Mono<UUID> getOrCreateUser(String email) {
@@ -41,14 +40,14 @@ public class InlineController {
                 }));
     }
 
-    private static InLineResponseObject createAddClaimInlineResponseObject(UUID userId) {
-        var accessPatch = new InLineResponseObject.Command("com.okta.access.patch", List.of(addUserIdClaim(userId)));
-        var identityPatch = new InLineResponseObject.Command("com.okta.identity.patch", List.of(addUserIdClaim(userId)));
-        return new InLineResponseObject(List.of(accessPatch, identityPatch));
+    private static InlineHookResponse createAddClaimInlineResponseObject(UUID userId) {
+        var accessPatch = new InlineHookResponse.Command("com.okta.access.patch", List.of(addUserIdClaim(userId)));
+        var identityPatch = new InlineHookResponse.Command("com.okta.identity.patch", List.of(addUserIdClaim(userId)));
+        return new InlineHookResponse(List.of(accessPatch, identityPatch));
     }
 
-    private static InLineResponseObject.Command.Value addUserIdClaim(UUID userId) {
-        return new InLineResponseObject.Command.Value(
+    private static InlineHookResponse.Command.Value addUserIdClaim(UUID userId) {
+        return new InlineHookResponse.Command.Value(
                 "add",
                 "/claims/userId",
                 userId.toString()
