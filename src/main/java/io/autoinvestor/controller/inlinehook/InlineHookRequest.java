@@ -1,6 +1,6 @@
-package io.autoinvestor.inlineHook;
+package io.autoinvestor.controller.inlinehook;
 
-public record InLineRequestObject(
+public record InlineHookRequest(
         Data data
 ) {
     public record Data(
