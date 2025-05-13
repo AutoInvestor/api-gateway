@@ -31,7 +31,6 @@ public class ClaimToHeaderGatewayFilterFactory implements GatewayFilterFactory<C
                 .filter(authentication -> authentication instanceof JwtAuthenticationToken)
                 .map(jtwAuthenticationToken -> addClaimToHeader(exchange, (JwtAuthenticationToken) jtwAuthenticationToken, config))
                 .defaultIfEmpty(exchange)
-                .map(a -> serverWebExchangeFactory.withoutAuthorization(exchange))
                 .flatMap(chain::filter);
     }
 
