@@ -37,7 +37,7 @@ public class UsersClient {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/user").build())
-                .body(new UserRequest(email), UserRequest.class)
+                .bodyValue(new UserRequest(email))
                 .exchangeToMono(clientResponse -> Mono.defer(() -> {
                     if (clientResponse.statusCode().value() == HttpStatus.CREATED.value()) {
                         return Mono.empty();
