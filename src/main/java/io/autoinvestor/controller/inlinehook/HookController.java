@@ -20,8 +20,16 @@ public class HookController {
     private final UsersClient usersClient;
 
     @PostMapping("/register")
-    public Mono<Void> register(@RequestBody RegisterHookRequest body) {
-        return usersClient.createUser(body.data().userProfile().email());
+    public Mono<RegistrationHookResponse> register(@RequestBody RegisterHookRequest body) {
+        return usersClient.createUser(body.data().userProfile().email())
+                .then(Mono.just(createRegistrationAllowResponseObject()));
+    }
+
+    private static RegistrationHookResponse createRegistrationAllowResponseObject() {
+        return new RegistrationHookResponse(List.of(new RegistrationHookResponse.Command(
+                "com.action.update",
+                new RegistrationHookResponse.Command.Value("ALLOW")
+        )));
     }
 
     @PostMapping("/token")
