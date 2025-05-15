@@ -3,6 +3,7 @@ package io.autoinvestor.controller.inlinehook;
 import io.autoinvestor.client.users.UserResponse;
 import io.autoinvestor.client.users.UsersClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,16 +21,9 @@ public class HookController {
     private final UsersClient usersClient;
 
     @PostMapping("/register")
-    public Mono<RegistrationHookResponse> register(@RequestBody RegisterHookRequest body) {
+    public Mono<ResponseEntity<?>> register(@RequestBody RegisterHookRequest body) {
         return usersClient.createUser(body.data().userProfile().email())
-                .then(Mono.just(createRegistrationAllowResponseObject()));
-    }
-
-    private static RegistrationHookResponse createRegistrationAllowResponseObject() {
-        return new RegistrationHookResponse(List.of(new RegistrationHookResponse.Command(
-                "com.action.update",
-                new RegistrationHookResponse.Command.Value("ALLOW")
-        )));
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
 
     @PostMapping("/token")
