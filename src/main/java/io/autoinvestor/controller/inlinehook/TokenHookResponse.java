@@ -2,7 +2,7 @@ package io.autoinvestor.controller.inlinehook;
 
 import java.util.List;
 
-public record InlineHookResponse(
+public record TokenHookResponse(
         List<Command> commands
 ) {
     public record Command(

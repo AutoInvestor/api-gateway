@@ -1,6 +1,6 @@
 package io.autoinvestor.controller.inlinehook;
 
-public record InlineHookRequest(
+public record TokenHookRequest(
         Data data
 ) {
     public record Data(
