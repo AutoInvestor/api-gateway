@@ -37,20 +37,29 @@ spring:
           filters:
             - SetStatus=200
 
+        - id: register-hook
+          uri: "forward:/hook/register"
+          predicates:
+            - Path=/api/hook/register
+          filters:
+            - AuthorizeHook
+
+        - id: token-hook
+          uri: "forward:/hook/token"
+          predicates:
+            - Path=/api/hook/token
+          filters:
+            - AuthorizeHook
+
         - id: okta-login-redirect
           uri: "forward:/auth/login"
           predicates:
             - Path=/api/auth/login
 
-        - id: okta-login-redirect
+        - id: okta-login-callback
           uri: "forward:/auth/callback"
           predicates:
             - Path=/api/auth/callback
-
-        - id: allow-inline-hook-access
-          uri: "forward:/inlineHook"
-          predicates:
-            - Path=/api/inlineHook
 
         - id: get-user-endpoint
           uri: "${USERS_BASE_URL}"
