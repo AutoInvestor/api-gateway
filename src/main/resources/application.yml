@@ -1,13 +1,15 @@
 autoinvestor:
-  domain: ${AUTOINVESTOR_URI}
+  baseUrl: ${AUTOINVESTOR_BASE_URL}
   tokenCookieName: "access_token"
   okta:
-    redirectUri: "${autoinvestor.domain}/api/auth/callback"
+    redirectUri: "${AUTOINVESTOR_BASE_URL}/api/auth/callback"
+    hookAuthHeaderName: "${OKTA_HOOK_AUTH_HEADER_NAME}"
+    hookAuthHeaderValue: "${OKTA_HOOK_AUTH_HEADER_VALUE}"
   client:
     users:
       url: "${USERS_BASE_URL}"
     oauth2:
-      url: "${OKTA_RESOURCE_SERVER_URI}/v1"
+      url: "https://${OKTA_DOMAIN}/oauth2/default/v1"
       authorization:
         basic:
           username: ${OKTA_CLIENT_ID}
@@ -18,7 +20,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "${OKTA_RESOURCE_SERVER_URI}"
+          issuer-uri: "https://${OKTA_DOMAIN}/oauth2/default/v1"
 
   cloud:
     gateway:

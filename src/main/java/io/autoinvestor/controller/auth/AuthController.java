@@ -31,7 +31,7 @@ public class AuthController {
     @Value("${autoinvestor.okta.redirectUri}")
     private String oktaRedirectUri;
 
-    @Value("${autoinvestor.domain}")
+    @Value("${autoinvestor.baseUrl}")
     private String domain;
 
     @GetMapping("/login")

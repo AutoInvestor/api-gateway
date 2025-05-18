@@ -2,6 +2,7 @@ package io.autoinvestor.filters;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,12 @@ import org.springframework.web.server.WebFilter;
 @Component
 @RequiredArgsConstructor
 public class AuthorizeHookGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+
+    @Value("${autoinvestor.okta.hookAuthHeaderName}")
+    private String apiAuthHeaderName;
+
+    @Value("${autoinvestor.okta.hookAuthHeaderValue}")
+    private String apiAuthHeaderValue;
 
     @Override
     public GatewayFilter apply(Object config) {
@@ -32,11 +39,11 @@ public class AuthorizeHookGatewayFilterFactory extends AbstractGatewayFilterFact
                 .build();
     }
 
-    public WebFilter headerAuthenticationFilter() {
+    private WebFilter headerAuthenticationFilter() {
         return (exchange, chain) -> {
-            String headerValue = exchange.getRequest().getHeaders().getFirst("X-Hook-Authentication");
+            String headerValue = exchange.getRequest().getHeaders().getFirst(apiAuthHeaderName);
 
-            if ("tremebundo-hook".equals(headerValue)) {
+            if (apiAuthHeaderValue.equals(headerValue)) {
                 return chain.filter(exchange);
             } else {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
