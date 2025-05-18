@@ -9,7 +9,7 @@ autoinvestor:
     users:
       url: "${USERS_BASE_URL}"
     oauth2:
-      url: "https://${OKTA_DOMAIN}/oauth2/default"
+      url: "https://${OKTA_DOMAIN}/oauth2/default/v1"
       authorization:
         basic:
           username: ${OKTA_CLIENT_ID}
@@ -20,7 +20,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "https://${OKTA_DOMAIN}/oauth2/default/v1"
+          issuer-uri: "https://${OKTA_DOMAIN}/oauth2/default"
 
   cloud:
     gateway:
