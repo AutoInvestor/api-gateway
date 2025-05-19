@@ -46,14 +46,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-bootBuildImage {
-	imageName = "${System.getenv("DOCKER_NAMESPACE")}/autoinvestor-${rootProject.name}:${System.getenv("DOCKER_IMAGE_VERSION")}"
-	docker {
-		publishRegistry {
-			url = System.getenv("DOCKER_REGISTRY")
-			token = "ignored"
-		}
-	}
-	publish = true
-}
