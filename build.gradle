@@ -52,6 +52,7 @@ bootBuildImage {
 	docker {
 		publishRegistry {
 			url = System.getenv("DOCKER_REGISTRY")
+			token = "ignored"
 		}
 	}
 	publish = true
