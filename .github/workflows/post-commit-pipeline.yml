@@ -69,14 +69,22 @@ jobs:
       - name: Build & Test
         run: ./gradlew clean build
 
+      - name: GCP Auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.BUILDER_SA_EMAIL }}
+
+      - name: Configure Docker
+        run: |
+          gcloud auth configure-docker ${{ vars.DOCKER_ARTIFACT_REGISTRY }} --quiet
+
       - name: Build & push docker image
         if: steps.version_increment.outputs.bump != 'none'
         env:
           DOCKER_REGISTRY: ${{ vars.DOCKER_ARTIFACT_REGISTRY }}
           DOCKER_NAMESPACE: ${{ vars.DOCKER_ARTIFACT_NAMESPACE }}
           DOCKER_IMAGE_VERSION: "${{ steps.calculate_version.outputs.new_version }}"
-          DOCKER_USERNAME: _json_key
-          DOCKER_PASSWORD: ${{ secrets.GCP_SA_KEY }}
         run: ./gradlew bootBuildImage
 
       - name: Create GitHub Release
