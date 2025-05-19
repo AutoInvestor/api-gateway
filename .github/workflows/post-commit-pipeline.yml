@@ -74,7 +74,6 @@ jobs:
         if: steps.version_increment.outputs.bump != 'none'
         uses: google-github-actions/auth@v2
         with:
-          token_format: 'access_token'
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ${{ vars.BUILDER_SA_EMAIL }}
 
