@@ -71,14 +71,19 @@ jobs:
         run: ./gradlew clean build
 
       - name: GCP Auth
+        if: steps.version_increment.outputs.bump != 'none'
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ${{ vars.BUILDER_SA_EMAIL }}
 
-      - name: Configure Docker
+      - name: Login into Artifact Registry
+        if: steps.version_increment.outputs.bump != 'none'
         run: |
-          gcloud auth configure-docker ${{ vars.DOCKER_ARTIFACT_REGISTRY }} --quiet
+          gcloud auth print-access-token | docker login \
+            --username oauth2accesstoken \
+            --password-stdin \
+            "${{ vars.DOCKER_ARTIFACT_REGISTRY }}"
 
       - name: Build & push docker image
         if: steps.version_increment.outputs.bump != 'none'
