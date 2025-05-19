@@ -74,16 +74,14 @@ jobs:
         if: steps.version_increment.outputs.bump != 'none'
         uses: google-github-actions/auth@v2
         with:
+          token_format: 'access_token'
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ${{ vars.BUILDER_SA_EMAIL }}
 
-      - name: Login into Artifact Registry
+      - name: Configure Docker
         if: steps.version_increment.outputs.bump != 'none'
         run: |
-          gcloud auth print-access-token | docker login \
-            --username oauth2accesstoken \
-            --password-stdin \
-            "${{ vars.DOCKER_ARTIFACT_REGISTRY }}"
+          gcloud auth configure-docker "${{ vars.DOCKER_ARTIFACT_REGISTRY }}" --quiet
 
       - name: Build & push docker image
         if: steps.version_increment.outputs.bump != 'none'
