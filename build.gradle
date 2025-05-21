@@ -48,5 +48,6 @@ tasks.named('test') {
 }
 
 bootBuildImage {
-	publish = false
+	imageName = "${System.getenv("DOCKER_NAMESPACE")}/autoinvestor-${rootProject.name}:${System.getenv("DOCKER_IMAGE_VERSION")}"
+	publish = true
 }

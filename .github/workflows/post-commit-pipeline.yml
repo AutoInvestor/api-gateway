@@ -70,13 +70,6 @@ jobs:
       - name: Build & Test
         run: ./gradlew clean build
 
-      - name: Build & push docker image
-        if: steps.version_increment.outputs.bump != 'none'
-        env:
-          DOCKER_IMAGE_NAME: "${{ vars.DOCKER_ARTIFACT_NAMESPACE }}/autoinvestor-api-gateway:${{ steps.calculate_version.outputs.new_version }}"
-        run: |
-          ./gradlew bootBuildImage --imageName="${DOCKER_IMAGE_NAME}"
-
       - name: GCP Auth
         if: steps.version_increment.outputs.bump != 'none'
         uses: google-github-actions/auth@v2
@@ -84,13 +77,16 @@ jobs:
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ${{ vars.BUILDER_SA_EMAIL }}
 
+      - name: Configure Artifact Registry
+        if: steps.version_increment.outputs.bump != 'none'
+        run: gcloud auth configure-docker "${{ vars.DOCKER_ARTIFACT_REGISTRY }}" --quiet
+
       - name: Build & push docker image
         if: steps.version_increment.outputs.bump != 'none'
         env:
-          DOCKER_IMAGE_NAME: "${{ vars.DOCKER_ARTIFACT_NAMESPACE }}/autoinvestor-api-gateway:${{ steps.calculate_version.outputs.new_version }}"
-        run: |
-          gcloud auth configure-docker "${{ vars.DOCKER_ARTIFACT_REGISTRY }}" --quiet
-          docker push "${DOCKER_IMAGE_NAME}"
+          DOCKER_NAMESPACE: ${{ vars.DOCKER_ARTIFACT_NAMESPACE }}
+          DOCKER_IMAGE_VERSION: "${{ steps.calculate_version.outputs.new_version }}"
+        run: ./gradlew bootBuildImage
 
       - name: Create GitHub Release
         if: steps.version_increment.outputs.bump != 'none'
