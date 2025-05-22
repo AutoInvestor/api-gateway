@@ -1,6 +1,5 @@
 package io.autoinvestor.controller.inlinehook;
 
-import io.autoinvestor.client.users.UserResponse;
 import io.autoinvestor.client.users.UsersClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.UUID;
-
 @RestController
-@RequestMapping("/hook")
+@RequestMapping("/api/hook")
 @RequiredArgsConstructor
 public class HookController {
 
@@ -24,26 +20,5 @@ public class HookController {
     public Mono<ResponseEntity<?>> register(@RequestBody RegisterHookRequest body) {
         return usersClient.createUser(body.data().userProfile().email())
                 .then(Mono.just(ResponseEntity.noContent().build()));
-    }
-
-    @PostMapping("/token")
-    public Mono<TokenHookResponse> token(@RequestBody TokenHookRequest body) {
-        return usersClient.getUser(body.data().access().claims().sub())
-                .map(UserResponse::userId)
-                .map(HookController::createAddClaimInlineResponseObject);
-    }
-
-    private static TokenHookResponse createAddClaimInlineResponseObject(UUID userId) {
-        var accessPatch = new TokenHookResponse.Command("com.okta.access.patch", List.of(addUserIdClaim(userId)));
-        var identityPatch = new TokenHookResponse.Command("com.okta.identity.patch", List.of(addUserIdClaim(userId)));
-        return new TokenHookResponse(List.of(accessPatch, identityPatch));
-    }
-
-    private static TokenHookResponse.Command.Value addUserIdClaim(UUID userId) {
-        return new TokenHookResponse.Command.Value(
-                "add",
-                "/claims/userId",
-                userId.toString()
-        );
     }
 }
