@@ -1,26 +1,33 @@
 autoinvestor:
-  baseUrl: ${AUTOINVESTOR_BASE_URL}
-  tokenCookieName: "access_token"
   okta:
-    redirectUri: "${AUTOINVESTOR_BASE_URL}/api/auth/callback"
     hookAuthHeaderName: "${OKTA_HOOK_AUTH_HEADER_NAME}"
     hookAuthHeaderValue: "${OKTA_HOOK_AUTH_HEADER_VALUE}"
   client:
     users:
       url: "${USERS_BASE_URL}"
-    oauth2:
-      url: "https://${OKTA_DOMAIN}/oauth2/default/v1"
-      authorization:
-        basic:
-          username: ${OKTA_CLIENT_ID}
-          password: ${OKTA_CLIENT_SECRET}
 
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "https://${OKTA_DOMAIN}/oauth2/default"
+          issuer-uri: https://${OKTA_DOMAIN}/oauth2/default
+      client:
+        registration:
+          okta:
+            client-id: ${OKTA_CLIENT_ID}
+            client-secret: ${OKTA_CLIENT_SECRET}
+            provider: okta
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/api/login/oauth2/code/{registrationId}"
+            scope: openid, profile, email
+        provider:
+          okta:
+            issuer-uri: https://${OKTA_DOMAIN}/oauth2/default
+            authorization-uri: https://${OKTA_DOMAIN}/oauth2/default/v1/authorize
+            token-uri: https://${OKTA_DOMAIN}/oauth2/default/v1/token
+            user-info-uri: https://${OKTA_DOMAIN}/oauth2/default/v1/userinfo
+            user-name-attribute: sub
 
   cloud:
     gateway:
@@ -39,29 +46,19 @@ spring:
           filters:
             - SetStatus=200
 
-        - id: register-hook
-          uri: "forward:/hook/register"
+        - id: oauth2-auth
+          uri: http://localhost:8080
           predicates:
-            - Path=/api/hook/register
+            - Path=/api/oauth2/**
           filters:
-            - AuthorizeHook
+            - RewritePath=/api/oauth2/(?<segment>.*), /oauth2/${segment}
 
-        - id: token-hook
-          uri: "forward:/hook/token"
+        - id: login-auth
+          uri: http://localhost:8080
           predicates:
-            - Path=/api/hook/token
+            - Path=/api/login/**
           filters:
-            - AuthorizeHook
-
-        - id: okta-login-redirect
-          uri: "forward:/auth/login"
-          predicates:
-            - Path=/api/auth/login
-
-        - id: okta-login-callback
-          uri: "forward:/auth/callback"
-          predicates:
-            - Path=/api/auth/callback
+            - RewritePath=/api/login/(?<segment>.*), /login/${segment}
 
         - id: get-user-endpoint
           uri: "${USERS_BASE_URL}"
@@ -69,6 +66,5 @@ spring:
             - Path=/api/user
             - Method=GET
           filters:
-            - Authorize
             - ClaimToHeader=userId,X-User-Id
             - RewritePath=/api/user,/user
