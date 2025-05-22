@@ -70,13 +70,6 @@ jobs:
       - name: Build & Test
         run: ./gradlew clean build
 
-      - name: Build & push docker image
-        if: steps.version_increment.outputs.bump != 'none'
-        env:
-          DOCKER_IMAGE_NAME: "${{ vars.DOCKER_ARTIFACT_NAMESPACE }}/autoinvestor-api-gateway:${{ steps.calculate_version.outputs.new_version }}"
-        run: |
-          ./gradlew bootBuildImage --imageName="${DOCKER_IMAGE_NAME}"
-
       - name: GCP Auth
         if: steps.version_increment.outputs.bump != 'none'
         uses: google-github-actions/auth@v2
@@ -89,7 +82,11 @@ jobs:
         env:
           DOCKER_IMAGE_NAME: "${{ vars.DOCKER_ARTIFACT_NAMESPACE }}/autoinvestor-api-gateway:${{ steps.calculate_version.outputs.new_version }}"
         run: |
+          echo -e "\033[32mBuilding docker image\033[0m"
+          ./gradlew bootBuildImage --imageName="${DOCKER_IMAGE_NAME}"
+          echo -e "\033[32mConfiguring docker registry\033[0m"
           gcloud auth configure-docker "${{ vars.DOCKER_ARTIFACT_REGISTRY }}" --quiet
+          echo -e "\033[32mPushing image\033[0m"
           docker push "${DOCKER_IMAGE_NAME}"
 
       - name: Create GitHub Release
