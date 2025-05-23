@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.server.WebFilter;
@@ -17,8 +16,6 @@ import org.springframework.web.server.WebFilter;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-
-    private final ReactiveJwtDecoder reactiveJwtDecoder;
 
     @Value("${autoinvestor.okta.hookAuthHeaderName}")
     private String apiAuthHeaderName;
@@ -48,9 +45,6 @@ public class SecurityConfiguration {
                         .anyExchange().permitAll()
                 )
                 .oauth2Login(Customizer.withDefaults())
-                .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
-                        .jwt(jwtSpec -> jwtSpec.jwtDecoder(reactiveJwtDecoder))
-                )
                 .build();
     }
 
