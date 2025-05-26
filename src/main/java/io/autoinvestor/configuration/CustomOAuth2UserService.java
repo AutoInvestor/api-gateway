@@ -25,6 +25,7 @@ public class CustomOAuth2UserService implements ReactiveOAuth2UserService<OAuth2
 
         return delegate.loadUser(userRequest)
                 .flatMap(oauth2User -> fetchUserId(oauth2User)
+                        .switchIfEmpty(createUser(oauth2User))
                         .map(userId -> {
                             Map<String, Object> attributes = new HashMap<>(oauth2User.getAttributes());
                             attributes.put("userId", userId);
@@ -34,7 +35,6 @@ public class CustomOAuth2UserService implements ReactiveOAuth2UserService<OAuth2
                                     "sub"
                             );
                         })
-                        .switchIfEmpty(Mono.error(new RuntimeException("User not found")))
                 );
     }
 
@@ -42,6 +42,12 @@ public class CustomOAuth2UserService implements ReactiveOAuth2UserService<OAuth2
         return usersClient
                 .getUser(user.getAttribute("email"))
                 .map(userResponse -> userResponse.userId().toString());
+    }
+
+    private Mono<String> createUser(OAuth2User user) {
+        return usersClient
+                .createUser(user.getAttribute("email"))
+                .then(fetchUserId(user));
     }
 }
 
