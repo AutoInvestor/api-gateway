@@ -1,7 +1,4 @@
 autoinvestor:
-  okta:
-    hookAuthHeaderName: "${OKTA_HOOK_AUTH_HEADER_NAME}"
-    hookAuthHeaderValue: "${OKTA_HOOK_AUTH_HEADER_VALUE}"
   client:
     users:
       url: "${USERS_BASE_URL}"

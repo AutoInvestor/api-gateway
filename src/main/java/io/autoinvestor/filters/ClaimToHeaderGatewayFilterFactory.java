@@ -1,6 +1,5 @@
 package io.autoinvestor.filters;
 
-import io.autoinvestor.ServerWebExchangeFactory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
 
 import java.util.List;
 
@@ -20,8 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClaimToHeaderGatewayFilterFactory implements GatewayFilterFactory<ClaimToHeaderGatewayFilterFactory.Config> {
 
-    private final ServerWebExchangeFactory serverWebExchangeFactory;
-
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> ReactiveSecurityContextHolder.getContext()
@@ -29,9 +27,16 @@ public class ClaimToHeaderGatewayFilterFactory implements GatewayFilterFactory<C
                 .filter(authentication -> authentication instanceof OAuth2AuthenticationToken)
                 .map(authentication -> (OAuth2AuthenticationToken) authentication)
                 .mapNotNull(authentication -> authentication.getPrincipal().getAttribute(config.getClaim()))
-                .map(userId -> serverWebExchangeFactory.withHeader(exchange, config.getHeaderName(), userId.toString()))
+                .filter(userId -> userId instanceof String)
+                .map(userId -> withHeader(exchange, config.getHeaderName(), (String) userId))
                 .defaultIfEmpty(exchange)
                 .flatMap(chain::filter);
+    }
+
+    private static ServerWebExchange withHeader(ServerWebExchange exchange, String headerName, String headerValue) {
+        return exchange.mutate().request(request -> request.headers(headers ->
+                headers.add(headerName, headerValue)
+        )).build();
     }
 
     @Override
