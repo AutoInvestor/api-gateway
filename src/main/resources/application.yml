@@ -51,14 +51,14 @@ spring:
           predicates:
             - Path=/api/oauth2/**
           filters:
-            - RewritePath=/api/oauth2/(?<segment>.*), /oauth2/${segment}
+            - RewritePath=/api/(?<segment>.*),/${segment}
 
         - id: login-auth
           uri: http://localhost:8080
           predicates:
             - Path=/api/login/**
           filters:
-            - RewritePath=/api/login/(?<segment>.*), /login/${segment}
+            - RewritePath=/api/(?<segment>.*),/${segment}
 
         - id: get-user-endpoint
           uri: "${USERS_BASE_URL}"
@@ -67,4 +67,49 @@ spring:
             - Method=GET
           filters:
             - ClaimToHeader=userId,X-User-Id
-            - RewritePath=/api/user,/user
+            - RewritePath=/api/(?<segment>.*),/${segment}
+
+        - id: get-all-assets-endpoint
+          uri: "${CORE_BASE_URL}"
+          predicates:
+            - Path=/api/assets
+            - Method=GET
+          filters:
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/api/(?<segment>.*),/${segment}
+
+        - id: get-asset-endpoint
+          uri: "${CORE_BASE_URL}"
+          predicates:
+            - Path=/api/assets/*
+            - Method=GET
+          filters:
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/api/(?<segment>.*),/${segment}
+
+        - id: get-asset-price-endpoint
+          uri: "${CORE_BASE_URL}"
+          predicates:
+            - Path=/api/assets/*/price
+            - Method=GET
+          filters:
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/api/(?<segment>.*),/${segment}
+
+        - id: get-news-endpoint
+          uri: "${MARKET_FEELING_BASE_URL}"
+          predicates:
+            - Path=/api/news
+            - Method=GET
+          filters:
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/api/(?<segment>.*),/${segment}
+
+        - id: get-decisions-endpoint
+          uri: "${MARKET_FEELING_BASE_URL}"
+          predicates:
+            - Path=/api/decisions
+            - Method=GET
+          filters:
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/api/(?<segment>.*),/${segment}
