@@ -15,10 +15,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
-                .securityMatcher(ServerWebExchangeMatchers.pathMatchers("/api/**"))
+                .securityMatcher(ServerWebExchangeMatchers.anyExchange())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
-                        .pathMatchers("/api/oauth2/**", "/api/login/**").permitAll()
+                        .pathMatchers("/", "/api/oauth2/**", "/api/login/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2Login(Customizer.withDefaults())
