@@ -2,6 +2,10 @@ autoinvestor:
   client:
     users:
       url: "${USERS_BASE_URL}"
+    portfolio:
+      url: "${PORTFOLIO_BASE_URL}"
+    market-feeling:
+      url: "${MARKET_FEELING_BASE_URL}"
 
 spring:
   security:
@@ -94,16 +98,16 @@ spring:
             - RewritePath=/api/(?<segment>.*),/${segment}
 
         - id: get-news-endpoint
-          uri: "${MARKET_FEELING_BASE_URL}"
+          uri: http://localhost:8080
           predicates:
             - Path=/api/news
             - Method=GET
           filters:
             - ClaimToHeader=userId,X-User-Id
-            - RewritePath=/api/(?<segment>.*),/${segment}
+            - RewritePath=/api/news, /internal/news
 
         - id: get-decisions-endpoint
-          uri: "${MARKET_FEELING_BASE_URL}"
+          uri: "${DECISION_MAKING_BASE_URL}"
           predicates:
             - Path=/api/decisions
             - Method=GET
