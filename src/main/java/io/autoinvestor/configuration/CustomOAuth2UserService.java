@@ -46,7 +46,11 @@ public class CustomOAuth2UserService implements ReactiveOAuth2UserService<OAuth2
 
     private Mono<String> createUser(OAuth2User user) {
         return usersClient
-                .createUser(user.getAttribute("email"))
+                .createUser(
+                        user.getAttribute("email"),
+                        user.getAttribute("given_name"),
+                        user.getAttribute("family_name")
+                )
                 .then(fetchUserId(user));
     }
 }

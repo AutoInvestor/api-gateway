@@ -33,11 +33,15 @@ public class UsersClient {
                 }));
     }
 
-    public Mono<Void> createUser(String email) {
+    public Mono<Void> createUser(
+            String email,
+            String firstName,
+            String lastName
+    ) {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/user").build())
-                .bodyValue(new UserRequest(email))
+                .bodyValue(new UserRequest(email, firstName, lastName))
                 .exchangeToMono(clientResponse -> Mono.defer(() -> {
                     if (clientResponse.statusCode().value() == HttpStatus.CREATED.value()) {
                         return Mono.empty();
