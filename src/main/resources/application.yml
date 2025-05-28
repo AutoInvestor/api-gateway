@@ -58,7 +58,7 @@ spring:
           uri: "${USERS_BASE_URL}"
           predicates:
             - Path=/api/user
-            - Method=GET
+            - Method=GET,PUT
           filters:
             - ClaimToHeader=userId,X-User-Id
             - RewritePath=/api/(?<segment>.*),/${segment}
@@ -104,6 +104,24 @@ spring:
           predicates:
             - Path=/api/decisions
             - Method=GET
+          filters:
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/api/(?<segment>.*),/${segment}
+
+        - id: get-alerts-endpoint
+          uri: "${ALERTS_BASE_URL}"
+          predicates:
+            - Path=/api/alerts
+            - Method=GET
+          filters:
+            - ClaimToHeader=userId,X-User-Id
+            - RewritePath=/api/(?<segment>.*),/${segment}
+
+        - id: portfolio-endpoints
+          uri: "${PORTFOLIO_BASE_URL}"
+          predicates:
+            - Path=/api/portfolio/holdings
+            - Method=GET,POST,PUT,DELETE
           filters:
             - ClaimToHeader=userId,X-User-Id
             - RewritePath=/api/(?<segment>.*),/${segment}
