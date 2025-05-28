@@ -40,13 +40,6 @@ spring:
           filters:
             - SetStatus=200
 
-        - id: plain-text-response
-          uri: "no://localhost"
-          predicates:
-            - Path=/api
-          filters:
-            - SetStatus=200
-
         - id: oauth2-auth
           uri: http://localhost:8080
           predicates:
