@@ -24,7 +24,7 @@ public class MarketFeelingClient {
     public Mono<List<NewsResponse>> getNews(String userId, String assetId) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/portfolio/holdings")
+                        .path("/news")
                         .queryParam("assetId", assetId)
                         .build())
                 .header("X-User-Id", userId)
